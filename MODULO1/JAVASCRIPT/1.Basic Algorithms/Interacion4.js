@@ -30,8 +30,7 @@ console.log(rickAndMortyCharacters[4])
 // 1.5 Elimina el último elemento del array y muestra el primero y el último por consola.
 // const rickAndMortyCharacters = ["Rick", "Beth", "Jerry", "Morty", "Summer", "Lapiz Lopez"];
 
-const1 rickAndMortyCharacters = ["Rick", "Beth", "Jerry", "Morty", "Summer", "Lapiz Lopez"]
-delete.const1("Lapiz Lopez")
+
 
 // 1.6 Elimina el segundo elemento del array y muestra el array por consola.
 // const rickAndMortyCharacters = ["Rick", "Beth", "Jerry", "Morty", "Summer", "Lapiz Lopez"];
