@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <!-- para que sea compatible con las ñ y tildes -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- compatibilidad en el navegador -->
+    <title>PorfolioNerea</title> <!-- titulo que se ve en la pestaña del navegador-->
+    <link rel="icon" href="/MODULO1/HTML/EjemploPorfolio/assets/favicon.png" 
+    <script type="text/javascript" src="/MODULO1/HTML/EjemploPorfolio/main.js" defer></script>
+    <!-- añadir el archivo de js -->
+    <link rel="stylesheet" href="./styles.css" /> añadir el archivo de css 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- diseño responsive  -->
+</head>
+
+<body>
+    <div class="container">
+<header id="header" class="header">
+        <div class="header_image">
+          <img
+            class="header_images--background"
+            width="900"
+            height="200"
+            src="./assets/fondo.jpg"
+            alt="background image"
+          />
+          <h1 class="header__text--title">NEREA MOLINA</h1>
+          <h2 class="header__text--subtitle">FULL-STACK DEVELOPER</h2>
+          <p class="header__text--info">
+            Soy desarrollador FullStack y este es mi portfolio.
+          </p>
+        
+        </div>
+        <!-- <div class="header__text">
+          <h1 class="header__text--title">NEREA MOLINA</h1>
+          <h2 class="header__text--subtitle">FULL-STACK DEVELOPER</h2>
+          <p class="header__text--info">
+            Soy desarrollador FullStack y este es mi portfolio.
+          </p>
+        </div> -->
+      </header>
+</div>
+ <body>
+    <article>
+      <h1>Bienvenidos</h1>
+      <p>
+        Poco a poco 
+      </p>
+    </article>
+    <figure>
+      <h3>Minion</h3>
+      <img
+        width="300"
+        height="300"
+        src="./assets/minion.jpg"
+        alt="Minion"
+        class="imagen-figure"
+      />
+     <a href="https://www.linkedin.com/in/nereamolina/">Mi linkedin</a>
+
+     <form>
+        <fieldset>
+             <!-- cuadro donde se incluyen los cuadrados para escribir  -->
+            <legend>Datos Personales</legend> 
+            <!-- titulo del formulario -->
+           <div class="inputUserName input-userName">
+            <!-- Label importante para la accesibilidad de la pagina -->
+            <label for="userName">Username: </label>
+          <div class="nombre"> 
+            <!-- el div sirve commo para hacer un elemento. Le doy una clase de nombre y se edita en css -->
+            <input
+              type="text"
+              name="Nombre"
+              id="userName"
+              placeholder="Nombre"
+              maxlength="10"
+              minlength="2"
+              required
+              class="inputBlack probandoClases"
+            />
+            <div class="telefono"
+            <input 
+            type="email"
+            name="email"
+            id="ponercorreo"
+            placeholder="pon tu correo"
+            />
+            <div 
+            <input 
+            type="tel"
+            name="telefono"
+            id="numerotelefono"
+            placeholder="pon tu telefono"
+          />
+
+        </div>
+        </fieldset>
+     </form>
+
+     <footer class="footer">
+        <div class="footer__links">
+          <ul>
+            <li>
+              <a class="footer__links--link" href="#header" rel="header__link"
+                >INICIO</a
+              >
+            </li>
+          </ul>
+        </div>
+        <p class="footer__copyright">© Copyright 2024. Made by Neky</p>
+</footer>
+
+  </body>
+</html>
