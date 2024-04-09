@@ -1,11 +1,11 @@
 #containerAhorcado {
-    width: 100%;
+  width: 100vw;
     min-height: 100vh;
     margin: auto;
     padding:20px;
       background-image: url(./sourceAhorcado/fondoAhorcado.jpeg);
   background-repeat: no-repeat;
-background-size: 1000px; 
+background-size: 1500px; 
 background-position-x: center;
 
 }
