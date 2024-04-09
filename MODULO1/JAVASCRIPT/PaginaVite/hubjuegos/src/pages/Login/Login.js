@@ -1,13 +1,15 @@
-//Login.js ----> src/pages/Login/Login.js
-
 import { setUser, setUserData } from "../../global/state/globalState";
 import { initControler } from "../../utils/route";
 import "./Login.css";
+import Swal from "sweetalert2"; //siempre las librerias se instalan y se importan para poder usarlas
+
 const template = () => `
   <div id="containerLogin">
     <h1 id="titleLogin">LOGIN</h1>
     <input type="text" name="username" id="username" />
-    <button id="buttonLogin">enviar</button>
+    <div id="containerbuttons"> <button id="buttonLogin">Login! </button>
+  <button id="buttonLogout">Logout!</button> </div>
+    
   </div>
 `;
 
@@ -17,11 +19,31 @@ const addListeners = () => {
   buttonLogin.addEventListener("click", (e) => {
     const valueInput = username.value;
 
+    // antes de introducir nada en el input salta primero este aviso de error
+    if (valueInput.trim() == "") {
+      return Swal.fire({
+        position: "center",
+        icon: "error",
+        title: `Introduce un usuario`,
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    }
+    // si has introducido bien en el input el usuario entonces aparece el login ok
+    //----------- Animacion de check si pones un nombre importada desde sweeter ---------------
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: `Bienvenido ${valueInput} 🥰`,
+      showConfirmButton: false,
+      timer: 2000,
+    });
+
     // como trabajo con el local lo convierto a string
 
     /**
      * Lo unico especial tiene este login es que comprueba si ya tenemos un usuario
-     * en el local con datos dee algun usuario con el mismo nombre
+     * en el local con datos de algun usuario con el mismo nombre
      * y asi lo asocia para coger los me gusta de los pokemon
      */
     if (localStorage.getItem(`${valueInput}USER`)) {
@@ -37,6 +59,7 @@ const addListeners = () => {
 
       // y llamamos a la funcion dee set del user logado actual
       setUser(`${valueInput}USER`);
+
       // y seteamos los datos del locaStorage en los datos de usuario logado con sus favoritos
       setUserData(parseUser);
     } else {
@@ -63,6 +86,17 @@ const addListeners = () => {
     initControler();
   });
 };
+
+// NO FUNCIONA LA ANIMACION DE ERROR si no te logeas
+//  if (value.trim() == "") {
+//    return Swal.fire({
+//      position: "center",
+//      icon: "error",
+//      title: `Introduce un usuario`,
+//      showConfirmButton: false,
+//      timer: 2000,
+//    });
+//  }
 
 export const Login = () => {
   /** cuando pintamos el login hay que ocultar la nav con sus navegaciones */

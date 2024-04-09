@@ -1,5 +1,5 @@
-//Dashboard.js ------> src/pages/Dashboard/Dashboard.js
-import { getInfo, initControler } from "../../utils";
+import { getStateMemory } from "../../global/state/memoryState";
+import { initControler } from "../../utils";
 import "./Dashboard.css";
 
 const template = () => `
@@ -15,16 +15,16 @@ const template = () => `
         </figure>
       </li>
       <li>
-        <figure>
+        <figure id="navigateAhorcado">
           <img
-            src="https://res.cloudinary.com/dq186ej4c/image/upload/v1689761641/pngwing.com_1_iq8zfk.png"
-            alt=" go to wacka topo game"
+            src="./public/ahorcado.png"
+            alt=" go to ahorcado game"
           />
-          <h2>WACKA TOPO</h2>
+          <h2>AHORCADO</h2>
         </figure>
       </li>
       <li>
-        <figure>
+        <figure id="navigateMemory">
           <img
             src="https://res.cloudinary.com/dq186ej4c/image/upload/v1689761735/6168776_kfna36.png"
             alt="go to memory game"
@@ -35,19 +35,26 @@ const template = () => `
     </ul>
   </div>
 `;
-
+//le damos el evento al boton del dashboard para que inice las paginas
 const addEventListeners = () => {
-  /** le damos el evento al boton de pokemon que es la unica pagina de contenido por
-   * ahora esta creada en el proyecto
-   */
   const navigatePokemon = document.getElementById("navigatePokemon");
   navigatePokemon.addEventListener("click", () => {
     initControler("Pokemon");
   });
+
+  const navigateMemory = document.getElementById("navigateMemory");
+  navigateMemory.addEventListener("click", () => {
+    initControler("Memory");
+  });
+
+  const navigateAhorcado = document.getElementById("navigateAhorcado");
+  navigateAhorcado.addEventListener("click", () => {
+    initControler("Ahorcado");
+  });
 };
 
 export const printTemplateDashboard = () => {
-  /** Como siempre las paginas se renderizan en el main por lo cual inyectamos el template en el contenedor del main */
+  clearInterval(getStateMemory("interval"));
   document.querySelector("main").innerHTML = template();
 
   /** Para la nav, que la habiamos ocultado en el login, la volvemos a renderizar cambiandole el display de none a flex */
@@ -55,5 +62,5 @@ export const printTemplateDashboard = () => {
 
   /** metemos los escuchadores de la pagina */
   addEventListeners();
-  getInfo();
+  // getInfo();
 };

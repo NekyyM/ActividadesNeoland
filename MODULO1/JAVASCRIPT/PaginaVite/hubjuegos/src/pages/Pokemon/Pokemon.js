@@ -1,4 +1,3 @@
-// Pokemon.js -----> src/pages/Pokemon.js
 import {
   PrintTemplateSpinner,
   CardsPokemons,

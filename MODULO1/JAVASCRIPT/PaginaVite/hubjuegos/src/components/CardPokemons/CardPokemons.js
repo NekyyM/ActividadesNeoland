@@ -28,10 +28,9 @@ export const CardsPokemons = (data) => {
     const templateFigure = ` <figure class=${classCustomType} id=${pokemon.id}>
       <img src=${pokemon.image} alt=${pokemon.name} />
       <h2>${pokemon.name}</h2>
-      <span class="material-icons-outlined">favorite ${
-        appUser.fav.includes(pokemon.id.toString()) ? "like" : ""
-      }
-    </span>;
+   <span class="material-symbols-outlined  ${
+     appUser.fav.includes(pokemon.id.toString()) ? "like" : ""
+   }"> favorite </span>
     </figure>`;
 
     document.getElementById("galleryPokemon").innerHTML += templateFigure;

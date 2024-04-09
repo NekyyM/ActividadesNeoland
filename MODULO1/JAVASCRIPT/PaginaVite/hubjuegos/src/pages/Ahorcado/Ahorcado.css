@@ -1,0 +1,58 @@
+#containerAhorcado {
+    width: 100%;
+    min-height: 100vh;
+    margin: auto;
+    padding:20px;
+      background-image: url(./sourceAhorcado/fondoAhorcado.jpeg);
+  background-repeat: no-repeat;
+background-size: 1000px; 
+background-position-x: center;
+
+}
+
+#game {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+    background: rgba(255,255,255,.7);
+    display: flex;
+/* color del cuadro del juego con un 70% de opacidad 
+si pongo display flec para que los dos div del padre game se alineen
+se me deforman las letras */
+}
+
+#muñequito {
+    width:240px;
+    height: 240px;
+}
+#palo0{
+    width: 200px;
+}
+
+
+#palabraAdivinar {
+    height: 3em;
+    & span {vertical-align: bottom;
+font-size: 2em;
+vertical-align: bottom;
+border-bottom: 2px solid black;
+width: 30px;
+text-align: center;
+margin-right: 6px;
+display: inline-block;  /*Por ser un elemmento de linea no toma el ancho, por eso necesita esta propiedad*/}
+}
+
+
+#botonesLetras {
+    margin-top: 30px;
+    width: 80%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+#botonesLetras button {
+    width: 28px;
+    padding: 6px 0;
+    text-align: center;
+}  
