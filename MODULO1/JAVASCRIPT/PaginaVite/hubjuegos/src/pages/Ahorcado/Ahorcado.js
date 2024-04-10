@@ -44,7 +44,7 @@ const template = () => `
 </div>
 </div> `;
 
-//todavia no tiene nada para iniciar el juego y no he creado el boton play
+//no he creado ventana antes del juego 
 
 const starGame = () => {
   const startButton = document.getElementById("palabra");
@@ -54,7 +54,7 @@ const starGame = () => {
     "desarrollador",
     "videojuego",
     "streamer",
-    "ñoquis",
+    "fideos",
     "microfono",
     "caramelos",
     "pokemon",
@@ -99,11 +99,12 @@ const starGame = () => {
       const span = document.createElement("span"); //primero crea una etiqueta span vacia por cada letra que tenga la palabra
       parrafo.appendChild(span); //este span lo incluyes al palabra como un hijo
     }
-    const botonLetras = document.querySelectorAll("#botonesLetras button");
-    //dentro del ID letras buscame los botones que hay. Con el All devuelve todos los elementos que encuentra
-    // ahora a cada letra hay que darle el click asi que recorremos todos los elementos con un for
+    const botones = document.querySelectorAll("#botonesLetras button");
     const clickLetras = () => {
-      console.log(palabraFinal); // crear variable palabra fuera de la primera funcion para que sea un valor global y me sirva en esta otra
+      console.log(palabraFinal);
+      for (let i = 0; i < botonesLetras.length; i++) {
+        botonesLetras[i].addEventListener(click, clickLetras);
+      }
     };
   });
 };
