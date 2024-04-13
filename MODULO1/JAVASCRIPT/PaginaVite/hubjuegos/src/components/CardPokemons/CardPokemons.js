@@ -1,4 +1,3 @@
-//CardPokemons.js ------> src/components/CardPokemons/CardPokemons.js
 import { getUserData, setUserData } from "../../global/state/globalState";
 import "./CardPokemons.css";
 
@@ -19,17 +18,18 @@ export const CardsPokemons = (data) => {
    *
    *
    * Pero antes de eso fijaros que el boton del favorite que es un span tiene una clase dinamica con un
-   * ternario en el que en caso de incluir el id de este pokemon en el aray de fav del usuario del contesto
+   * ternario en el que en caso de incluir el id de este pokemon en el array de fav del usuario del contesto
    * el cual se encuentra logado ponerle la clase de  like y luego por css todos los que tengan like
    * le ponemos el corazon en rojo, sino se queda el simbolo del corazon en su color original
    */
   data.map((pokemon) => {
+    //Se mapean los datos de la api para solo extraer los que necsitamos
     const classCustomType = `"figurePokemon ${pokemon.type[0].type.name}"`;
     const templateFigure = ` <figure class=${classCustomType} id=${pokemon.id}>
       <img src=${pokemon.image} alt=${pokemon.name} />
       <h2>${pokemon.name}</h2>
    <span class="material-symbols-outlined  ${
-     appUser.fav.includes(pokemon.id.toString()) ? "like" : ""
+     appUser.fav.includes(pokemon.id.toString()) ? "like" : "" //Ternario, si incluye el pokemon con like si no está vacio
    }"> favorite </span>
     </figure>`;
 
@@ -48,7 +48,7 @@ const addListeners = (data) => {
    */
   const appUser = getUserData();
 
-  /** apuntamos a tods los span que son realmente los corazones. Los recorremos todos los span y le metemos
+  /** apuntamos a tods los span que son realmente los corazones. Los recorremos con un forEach y le metemos
    * el evento de tipo click
    */
   const spanAll = document.querySelectorAll("span");

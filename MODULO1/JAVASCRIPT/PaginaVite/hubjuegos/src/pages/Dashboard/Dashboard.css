@@ -19,17 +19,17 @@
     gap: 2rem;
     margin: 2rem 0 2rem 0;
     & li figure {
-      width: 350px;
-      height: 350px;
-      border-radius: 50%;
-      background-color: black;
+      width: 220px;
+      height: 220px;
+      border-radius: 20%;
+      background-color: rgb(85, 42, 123); 
       color: white;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       margin: 0.5rem;
-      background: #0d0d0d;
+    
       -webkit-box-shadow: 0px 8px 30px -3px rgba(0, 0, 0, 0.61);
       -moz-box-shadow: 0px 8px 30px -3px rgba(0, 0, 0, 0.61);
       box-shadow: 0px 8px 30px -3px rgba(0, 0, 0, 0.61);

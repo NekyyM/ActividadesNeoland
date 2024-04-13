@@ -1,4 +1,3 @@
-//SpinnerButton.js-----> src/components/spinner/SpinnerButton.js
 import "./SpinnerButton.css";
 const template = () =>
   `<div class="containerSpinnerButton">
@@ -12,3 +11,5 @@ const template = () =>
 export const PrintSpinner = () => {
   document.getElementById("spinnerButtonFilter").innerHTML = template();
 };
+
+//Elemento que muestra que se están cargando los datos

@@ -1,88 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing:border-box;
+    
+} 
+
 #containerAhorcado {
-  width: 100vw;
+  width: 100%;
     min-height: 100vh;
     margin: auto;
     padding:20px;
       background-image: url(./sourceAhorcado/fondoAhorcado.jpeg);
   background-repeat: no-repeat;
   background-attachment: fixed;
-background-size: 1500px; 
-background-position-x: center;
-
+background-size: cover; 
+background-position: center;
 }
 
-#game {
-    width: 80%;
+
+#game{
+   width: 80%;
+   max-width: 800px;
     margin: auto;
-    padding: 20px;
+    padding: 10px;
     border-radius: 10px;
+    display: flex;
     background: rgba(255, 255, 255, 0.581);
-    display: flex;
-/* color del cuadro del juego con un 70% de opacidad 
-si pongo display flec para que los dos div del padre game se alineen
-se me deforman las letras */
-}
-
-#muñequito {
-    width:240px;
-    height: 320px;
-}
-#palo0{
-    width: 200px;
-    height: 300px;
+  
+/* color del cuadro del juego con un 58% de opacidad  */
 }
 
 
-#palabraAdivinar {
-    height: 3em;
-    margin: 20px;
-     border-radius: 10px;
-    & span {vertical-align: bottom;
-font-size: 2em;
-vertical-align: bottom;
-border-bottom: 1px solid black;
-width: 30px;
-text-align: center;
-margin-right: 6px;
-display: inline-block;  /*Por ser un elemmento de linea no toma el ancho, por eso necesita esta propiedad*/}
+
+#palabraAdivinar{
+  margin: 20px 0;
+    height: 3rem;
+    margin:70px;
+
+}
+#jugar {
+    margin: 5px;
+    position: relative;
+    bottom: 50px;
+     border-radius: 50px;
+   background:#60984d;
+   font-family: "Nunito", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  &:hover {
+        -webkit-box-shadow: 0px 8px 10px -3px rgba(0, 0, 0, 0.61);
+        -moz-box-shadow: 0px 8px 10px -3px rgba(0, 0, 0, 0.61);
+        box-shadow: 0px 8px 10px -3px rgba(0, 0, 0, 0.61);
+
+        transform: scale(0.98);
+
+      } 
+  
 }
 
-#palabra {
-    margin: 20px;
+#resultado{
+  position: relative;
+  left: 35px;
+     font-family: "Nunito", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
 }
 
-#botonesLetras {
-    margin: 20px;
-    margin-top: 30px;
-    width: 80%;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 7px;
-}
 
-#botonesLetras button {
-    width: 28px;
-    padding: 6px 0;
+#palabraAdivinar span{ 
+    vertical-align: bottom;
+    font-size: 20px;
+    border-bottom: 2px solid black;
+    width: 30px;
     text-align: center;
-}  
+    display: inline-block; 
+     margin: 0 6px; /* Espaciado horizontal MArgen derecha */
+}
 
+#imagen {
+      width: 80%; /* Utilizando porcentajes para hacerlo responsive */
+  max-width: 240px; /* Limitando el ancho máximo para mantener la proporción */
+  height: auto; /* Manteniendo la proporción */
+  margin: 20px 0;
+}
 
-/* ---------IPHONE  SE --------- */
-@media (max-width: 376px) {
+/*  iPhone SE */
+
+@media only screen and (max-width: 480px) {
   #containerAhorcado {
-    padding: 0;
-  }
-    #game {
-    box-sizing: content-box;
-    width: 17.5em;
-    
-    background-color: #ffffff62;
-    border-radius: 0px;
-    box-shadow: 0 0.9em 2.8em rgba(86, 66, 0, 0.2);
-  }
-  #botonesLetras{
-    box-sizing: content-box;
-    width: 17.5em;
+    padding: 10px;
   }
 
+  #game {
+    width: 95%;
+  }
+
+  #palabraAdivinar {
+    margin: 20px 0;
+  }
+
+  #jugar {
+    bottom: 20px;
+  }
+
+  #palabraAdivinar span {
+    font-size: 1.5rem;
+    width: 15px;
+    margin: 0 4px;
+  }
+
+  #imagen {
+    width: 60%;
+    height: 40%;
+  }
+}
+
+/* Tablets */
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  #containerAhorcado {
+    padding: 15px;
+  }
+
+  #game {
+    width: 70%;
+  }
+
+  #palabraAdivinar {
+    margin: 30px 0;
+  }
+
+  #jugar {
+    bottom: 30px;
+  }
+
+  #palabraAdivinar span {
+  
+    width: 15px;
+    margin: 0 8px;
+  }
+
+  #imagen {
+    width: 85%;
+    max-width: 280px;
+  }
 }

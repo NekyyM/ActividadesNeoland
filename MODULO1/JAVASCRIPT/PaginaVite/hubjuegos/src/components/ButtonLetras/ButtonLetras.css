@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing:border-box;
+} 
+
+#botonesLetras {
+    margin: 20px auto; /* Centrar los botones horizontalmente */
+    margin-top: 30px;
+    width: 100%;
+    display: inline-block; /* Cambiar a display grid para crear una cuadrícula */
+    gap: 7px; /* Separación entre los botones */
+}
+
+#botonesLetras button {
+    padding: 6px 0;
+    text-align: center;
+    width: 35px;
+    gap: 7px;
+    margin: 3px;
+   border-radius: 50px;
+   background:#60984D;
+  font-family: "Nunito", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  &:hover {
+        -webkit-box-shadow: 0px 8px 10px -3px rgba(0, 0, 0, 0.61);
+        -moz-box-shadow: 0px 8px 10px -3px rgba(0, 0, 0, 0.61);
+        box-shadow: 0px 8px 10px -3px rgba(0, 0, 0, 0.61);
+
+        transform: scale(0.98);
+
+      } 
+}
+
+/* Media Query para iphone */
+@media only screen and (max-width: 480px) {
+    #botonesLetras {
+        grid-template-columns: repeat(auto-fill, minmax(25px, 1fr)); /* Columnas automáticas con un ancho mínimo de 25px */
+        gap: 5px; /* Separación entre los botones */
+    }
+
+    #botonesLetras button {
+        width: 25px; /* Reducir el ancho de los botones */
+        font-size: 0.8em; /* Reducir el tamaño de fuente */
+    }
+}
+
+
+/* Media Query para tablets */
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+    #botonesLetras {
+        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); /* Columnas automáticas con un ancho mínimo de 40px */
+        gap: 10px; /* Separación entre los botones */
+    }
+
+    #botonesLetras button {
+        width: 40px; /* Ajustar el ancho de los botones */
+        font-size: 1em; /* Ajustar el tamaño de fuente */
+    }
+}
+
+
+
+
+
+
+
+/* 
+#botonesLetras {
+    margin: 20px;
+    margin-top: 30px;
+    width: 80%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+#botonesLetras button {
+    width: 28px;
+    padding: 6px 0;
+    text-align: center;
+}  
+ */
+
+
+
+ 

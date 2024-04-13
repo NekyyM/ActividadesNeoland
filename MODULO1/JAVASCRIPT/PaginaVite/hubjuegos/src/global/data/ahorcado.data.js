@@ -1,0 +1,17 @@
+export const palabras = [
+  "manzana",
+  "gato",
+  "perro",
+  "olivo",
+  "neoland",
+  "discord",
+  "videojuego",
+  "streamer",
+  "fideos",
+  "microfono",
+  "caramelos",
+  "pokemon",
+  "minions",
+  "pikachu",
+  "sudadera",
+];

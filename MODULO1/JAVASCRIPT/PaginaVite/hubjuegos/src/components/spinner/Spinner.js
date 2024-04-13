@@ -1,5 +1,3 @@
-//Spinner.js-----> src/components/spinner/Spinner.js
-
 import "./Spinner.css";
 
 const template = () => `

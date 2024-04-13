@@ -26,7 +26,7 @@ const template = () => `
       <li>
         <figure id="navigateMemory">
           <img
-            src="https://res.cloudinary.com/dq186ej4c/image/upload/v1689761735/6168776_kfna36.png"
+            src="./public/sourceMemory/1.png"
             alt="go to memory game"
           />
           <h2>MEMORY GAME</h2>
