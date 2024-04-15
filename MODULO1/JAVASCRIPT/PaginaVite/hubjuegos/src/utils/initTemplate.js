@@ -1,4 +1,3 @@
-// initTemplate.js -----> dentro de utils
 import { PrintTemplateHeader, PrintTemplateFooter } from "../components";
 export const initTemplate = () => {
   const app = document.getElementById("app");

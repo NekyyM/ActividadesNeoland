@@ -1,4 +1,3 @@
-// --- Footer.js -----> src/components/Footer/Footer.js
 import "./Footer.css";
 const template = () => `
 <h3><span>Esto es un intento de web hecha con 💘 de </span> Neky</h3>

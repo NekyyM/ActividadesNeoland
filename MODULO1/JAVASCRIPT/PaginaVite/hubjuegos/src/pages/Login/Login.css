@@ -1,4 +1,6 @@
-
+input:focus {
+  background-color: rgba(164, 89, 181, 0.425);
+}
 #containerLogin {
   width: 100%;
   
