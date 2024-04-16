@@ -1,4 +1,6 @@
-
+root {
+  --font-family: "Lato", sans-serif;
+}
 #galleryPokemon {
   display: flex;
   justify-content: center;
@@ -15,7 +17,7 @@
   margin: 0 0 1rem 0;
   & button {
     padding: 2px; 
-  font-family: "Lato", sans-serif; }
+   }
 }
 
 #inputPokemon {
