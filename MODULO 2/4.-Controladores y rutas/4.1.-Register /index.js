@@ -1,6 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const { connect } = require("./src/utils/db");
+
+// cuando se crasea nodemon y no conecta con el server restaurar nodemon con  npx nodemon index.js en terminal
 //! ----------------------------------------------------------
 //?------------------ creamos el servidor web------------------
 //! ----------------------------------------------------------

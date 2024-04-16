@@ -108,7 +108,9 @@ const registerLargo = async (req, res, next) => {
           return res.status(404).json("error save user");
         }
       } catch (error) {
-        return res.status(404).json(error.message);
+        return res
+          .status(404)
+          .json({ message: "Error6", error: error.message });
       }
     } else {
       if (req.file) deleteImgCloudinary(catchImg); //si ya existe el usuario echalo con el codigo 409
@@ -117,9 +119,10 @@ const registerLargo = async (req, res, next) => {
   } catch (error) {
     // SIEMPRE QUE HAY UN ERROR GENERAL TENEMOS QUE BORRAR LA IMAGEN QUE HA SUBIDO EL MIDDLEWARE
     if (req.file) deleteImgCloudinary(catchImg);
-    return next(error);
+    return next({ message: "Error7", error: error });
   }
 };
+
 //! -----------------------------------------------------------------------------
 //? ----------------------------REGISTER CORTO EN CODIGO ------------------------
 //! -----------------------------------------------------------------------------
@@ -167,7 +170,9 @@ const registerUtil = async (req, res, next) => {
           }, 2500);
         }
       } catch (error) {
-        return res.status(404).json(error.message);
+        return res
+          .status(404)
+          .json({ message: "Error1", error: error.message });
       }
     } else {
       if (req.file) deleteImgCloudinary(catchImg);
@@ -175,7 +180,7 @@ const registerUtil = async (req, res, next) => {
     }
   } catch (error) {
     if (req.file) deleteImgCloudinary(catchImg);
-    return next(error);
+    return next({ message: "Error2", error: error });
   }
 };
 
@@ -228,7 +233,9 @@ const registerWithRedirect = async (req, res, next) => {
           );
         }
       } catch (error) {
-        return res.status(404).json(error.message);
+        return res
+          .status(404)
+          .json({ message: "Error3", error: error.message });
       }
     } else {
       //----> SI EL USUARIO EXISTE:
@@ -240,7 +247,7 @@ const registerWithRedirect = async (req, res, next) => {
   } catch (error) {
     // si hay un error general borramos la URL porque no hemos registrado al usuario
     if (req.file) deleteImgCloudinary(catchImg);
-    return next(error);
+    return next({ message: "Error4", error: error });
   }
 };
 
@@ -295,7 +302,7 @@ const sendMailRedirect = async (req, res, next) => {
       }
     });
   } catch (error) {
-    return next(error); //todos los errores que mande con el next se guardan en el Lock, es la consola que guarda los errores y
+    return next({ message: "Error5", error: error }); //todos los errores que mande con el next se guardan en el Lock, es la consola que guarda los errores y
     //se quedan registrados con la fecha y la hora y demás,, se miran en github.
   }
 };
