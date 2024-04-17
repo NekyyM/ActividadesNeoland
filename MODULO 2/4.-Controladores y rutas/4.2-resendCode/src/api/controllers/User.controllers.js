@@ -1,17 +1,12 @@
 //! -----------------------------------------------------------------------
 //? ------------------------------librerias--------------------------------
 //! -----------------------------------------------------------------------
-const nodemailer = require("nodemailer"); //envia el correo
-const validator = require("validator"); // se utiliza para validar el correo
-const bcrypt = require("bcrypt"); // sirve para encriptar las contraseñas
-const dotenv = require("dotenv"); // sirve para importar archivos del .env
+const nodemailer = require("nodemailer");
+const validator = require("validator");
+const bcrypt = require("bcrypt");
+const dotenv = require("dotenv");
 
-dotenv.config(); //siempre después de importar dotenv hay que configurarlo
-
-//Lo primero es requerirnos las librerias que vamos a necesitar en nuestro proyecto
-
-//Se recomienda utilizar funciones de single responsability para que solo tenga una funcion y asi se mas facil
-//identificar los errores cuando falla algo
+dotenv.config();
 
 //! -----------------------------------------------------------------------
 //? ------------------------------modelos----------------------------------
@@ -19,7 +14,7 @@ dotenv.config(); //siempre después de importar dotenv hay que configurarlo
 const User = require("../models/User.model");
 
 //! -----------------------------------------------------------------------
-//? ------------------------------utils - middlewares----------------------
+//? ------------------------utils - middlewares - states ------------------
 //! -----------------------------------------------------------------------
 const { deleteImgCloudinary } = require("../../middleware/files.middleware");
 const randomCode = require("../../utils/randomCode");
@@ -38,12 +33,8 @@ const setError = require("../../helpers/handle-error");
 //! -----------------------------------------------------------------------------
 //? ----------------------------REGISTER LARGO EN CODIGO ------------------------
 //! -----------------------------------------------------------------------------
-//request, response, next
-const registerLargo = async (req, res, next) => {
-  console.log("entro");
-  //las funciones son asincronas porque le pido algo a mongoDB y eso puede tardar
-  //en responder unos segundos.
 
+const registerLargo = async (req, res, next) => {
   // capturamos la imagen nueva subida a cloudinary
   let catchImg = req.file?.path;
   try {
@@ -54,17 +45,15 @@ const registerLargo = async (req, res, next) => {
 
     // vamos a buscsar al usuario
     const userExist = await User.findOne(
-      //con fineOne busca si existe un nombre y un email igual. Usa destructuring
       { email: req.body.email },
       { name: req.body.name }
     );
 
     if (!userExist) {
-      //si no existe el usuario registralo
       let confirmationCode = randomCode();
       const newUser = new User({ ...req.body, confirmationCode });
       if (req.file) {
-        newUser.image = req.file.path; //si tienes imagen metes la imagen si no la tienes metes una por defecto.
+        newUser.image = req.file.path;
       } else {
         newUser.image = "https://pic.onlinewebfonts.com/svg/img_181369.png";
       }
@@ -112,7 +101,7 @@ const registerLargo = async (req, res, next) => {
         return res.status(404).json(error.message);
       }
     } else {
-      if (req.file) deleteImgCloudinary(catchImg); //si ya existe el usuario echalo con el codigo 409
+      if (req.file) deleteImgCloudinary(catchImg);
       return res.status(409).json("this user already exist");
     }
   } catch (error) {
@@ -121,7 +110,6 @@ const registerLargo = async (req, res, next) => {
     return next(error);
   }
 };
-
 //! -----------------------------------------------------------------------------
 //? ----------------------------REGISTER CORTO EN CODIGO ------------------------
 //! -----------------------------------------------------------------------------
@@ -182,7 +170,6 @@ const registerUtil = async (req, res, next) => {
 };
 
 const registerWithRedirect = async (req, res, next) => {
-  console.log("entro");
   // capturamos la imagen por si hay un error borrarla en cloudinary
   let catchImg = req.file?.path;
 
@@ -226,7 +213,7 @@ const registerWithRedirect = async (req, res, next) => {
         if (userSave) {
           // si hay usuario hacemos el redirech
           return res.redirect(
-            307,
+            303,
             `http://localhost:8080/api/v1/users/register/sendMail/${userSave._id}`
           );
         }
@@ -261,7 +248,7 @@ const sendMailRedirect = async (req, res, next) => {
     // ---------------------------CONFIGURAMOS NODEMAILER -----------------------------------
     const emailEnv = process.env.EMAIL;
     const password = process.env.PASSWORD;
-    // --> 1) Configuramos el transporter de nodemailer. Transporte es como el cartero que lleva la carta
+    // --> 1) Configuramos el transporter de nodemailer
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -269,7 +256,7 @@ const sendMailRedirect = async (req, res, next) => {
         pass: password,
       },
     });
-    // --> 2) creamos las opciones del envio del email. Y aqui seria lo que contiene la carta
+    // --> 2) creamos las opciones del envio del email
     const mailOptions = {
       from: emailEnv,
       to: userDB.email,
@@ -278,7 +265,6 @@ const sendMailRedirect = async (req, res, next) => {
     };
     // --> 3) enviamos el correo y gestionamos el error o el ok del envio
     transporter.sendMail(mailOptions, function (error, info) {
-      //Lo que lleva es la carta y lo que quiero enviar, después es una callback que gestiona el error y la info del envío
       if (error) {
         console.log(error);
         // damos feedback al frontal de que no se ha enviado correctamente el codigo
@@ -298,8 +284,54 @@ const sendMailRedirect = async (req, res, next) => {
       }
     });
   } catch (error) {
-    return next(error); //todos los errores que mande con el next se guardan en el Lock, es la consola que guarda los errores
-    //se quedan registrados con la fecha y la hora y demás,, se miran en github.
+    return next(error);
+  }
+};
+
+const resendCode = async (req, res, next) => {
+  //todas las funciones q
+  console.log("body", req);
+  try {
+    //! vamos a configurar nodemailer porque tenemos que enviar un codigo
+    const email = process.env.EMAIL;
+    const password = process.env.PASSWORD;
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: email,
+        pass: password,
+      },
+    });
+
+    //! hay que ver que el usuario exista porque si no existe no tiene sentido hacer ninguna verificacion
+    const userExists = await User.findOne({ email: req.body?.email });
+
+    if (userExists) {
+      const mailOptions = {
+        from: email,
+        to: req.body?.email,
+        subject: "Confirmation code",
+        text: `tu codigo es ${userExists.confirmationCode}`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log(error);
+          return res.status(404).json({
+            resend: false,
+          });
+        } else {
+          console.log("Email sent: " + info.response);
+          return res.status(200).json({
+            resend: true,
+          });
+        }
+      });
+    } else {
+      return res.status(404).json("User not found");
+    }
+  } catch (error) {
+    return next(setError(500, error.message || "Error general send code"));
   }
 };
 
@@ -308,4 +340,5 @@ module.exports = {
   registerUtil,
   registerWithRedirect,
   sendMailRedirect,
+  resendCode,
 };
