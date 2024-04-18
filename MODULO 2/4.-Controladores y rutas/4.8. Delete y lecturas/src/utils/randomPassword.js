@@ -13,5 +13,3 @@ const randomPassword = () => {
 };
 
 module.exports = randomPassword;
-
-//crea una password aleatoria con el metodo math.flor y la exporta.

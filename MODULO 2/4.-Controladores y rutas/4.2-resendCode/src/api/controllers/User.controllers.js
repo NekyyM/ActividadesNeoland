@@ -289,7 +289,6 @@ const sendMailRedirect = async (req, res, next) => {
 };
 
 const resendCode = async (req, res, next) => {
-  //todas las funciones q
   console.log("body", req);
   try {
     //! vamos a configurar nodemailer porque tenemos que enviar un codigo
@@ -304,7 +303,7 @@ const resendCode = async (req, res, next) => {
     });
 
     //! hay que ver que el usuario exista porque si no existe no tiene sentido hacer ninguna verificacion
-    const userExists = await User.findOne({ email: req.body?.email });
+    const userExists = await User.findOne({ email: req.body?.email }); //compueba si exsite con el findOne y el email
 
     if (userExists) {
       const mailOptions = {

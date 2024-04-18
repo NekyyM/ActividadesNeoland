@@ -25,6 +25,7 @@ const {
 } = require("../../state/state.data");
 const setError = require("../../helpers/handle-error");
 const { generateToken } = require("../../utils/token");
+const randomPassword = require("../../utils/randomPassword");
 
 //------------------->CRUD es el acrónimo de "Crear, Leer, Actualizar y Borrar"
 /**+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -424,7 +425,7 @@ const login = async (req, res, next) => {
    * 2) comprobar con el email que exista en la mongo db
    * 3)comprobamos que la contraseña coincida con la base de datos
    *  - comparamos una contraseña sin encrytar con un encritada -> bcrypt
-   * 4) Si con iguales genero un token --> con la funcion generateToken  en los util el token
+   * 4) Si con iguales genero un token --> con la funcion generateToken  de los util el token
    *
    * Errores:
    * -> que el usuario no exista en la db
@@ -434,20 +435,18 @@ const login = async (req, res, next) => {
    */
 
   try {
-    const { email, password } = req.body; //recibo por el body correo y contraseña
-    const userDB = await User.findOne({ email }); //compruebo que existe en la base de datos con findOne
+    const { email, password } = req.body;
+    const userDB = await User.findOne({ email });
 
     if (userDB) {
-      // el metodo compareSync compara dos contraseñas una sin encryptar y otra encriptada, lo comprueba bcrypt
+      // compara dos contraseñar una sin encryptar y otra que si lo esta
       if (bcrypt.compareSync(password, userDB.password)) {
-        const token = generateToken(userDB._id, email); //genera un token con la funcion de los utils, le da el id y el mail
+        const token = generateToken(userDB._id, email);
         return res.status(200).json({
-          //devuelve la respuesta 200 que esta todo bien
           user: userDB,
           token,
         });
       } else {
-        //si no coincide el pasword o el user no esta registrado devuelve un fallo 404
         return res.status(404).json("password dont match");
       }
     } else {
@@ -463,7 +462,7 @@ const login = async (req, res, next) => {
 //! -----------------------------------------------------------------------------
 
 const autoLogin = async (req, res, next) => {
-  /** ES IGUAL QUE EL LOGIN SOLO QUE AHORA COMPARO DOS CONTRASEÑAS ENCRYPTADAS
+  /** ES IGUAL QUE EL LOGIN SOLO QUE AHORA COMPARO DOS CONTRASEÑAS ENCRYPTADA
    * Y NO HHACE FALTA EL COMPARESYNC
    * */
   try {
@@ -473,7 +472,6 @@ const autoLogin = async (req, res, next) => {
     if (userDB) {
       // comparo dos contraseñas encriptadas
       if (password == userDB.password) {
-        //compara dos contraseñas encriptadas con el ==
         const token = generateToken(userDB._id, email);
         return res.status(200).json({
           user: userDB,
@@ -490,6 +488,407 @@ const autoLogin = async (req, res, next) => {
   }
 };
 
+//! -----------------------------------------------------------------------------
+//? -----------------------CONTRASEÑAS Y SUS CAMBIOS-----------------------------
+//! -----------------------------------------------------------------------------
+
+//? -----------------------------------------------------------------------------
+//! ------------------CAMBIO DE CONTRASEÑA CUANDO NO ESTAS LOGADO---------------
+//? -----------------------------------------------------------------------------
+
+const changePassword = async (req, res, next) => {
+  /**
+   * Pasos a seguir:
+   * 1) Vamos a recibir el email del usuario por el body
+   * 2) Comprobamos que exista este user en la bdo
+   * 3) Generamos una contraseña nueva --> estará en utils
+   * 4) Tenemos que encryptar la contraseña y guardarla en el bdo
+   * 5) Se la enviamos al user
+   *
+   * ERRORES:
+   * -> el user no este registrado
+   * -> que no se haya generado la contraseña
+   * -> que no le haya enviado el correo con la contraseña
+   * -> que no se haya actualizado la contraseña en la bdo
+   */
+
+  try {
+    /** vamos a recibir  por el body el email y vamos a comprobar que
+     * este user existe en la base de datos
+     */
+    const { email } = req.body;
+    console.log(req.body);
+    const userDb = await User.findOne({ email });
+    if (userDb) {
+      /// si existe hacemos el redirect
+      const PORT = process.env.PORT;
+      return res.redirect(
+        307,
+        `http://localhost:${PORT}/api/v1/users/sendPassword/${userDb._id}`
+      );
+    } else {
+      return res.status(404).json("User no register");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const sendPassword = async (req, res, next) => {
+  try {
+    /** VAMOS A BUSCAR AL USER POOR EL ID DEL PARAM */
+    const { id } = req.params;
+    const userDb = await User.findById(id);
+    const email = process.env.EMAIL;
+    const password = process.env.PASSWORD;
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: email,
+        pass: password,
+      },
+    });
+    let passwordSecure = randomPassword();
+    console.log(passwordSecure);
+    const mailOptions = {
+      from: email,
+      to: userDb.email,
+      subject: "-----",
+      text: `User: ${userDb.name}. code: ${passwordSecure} Hemos enviado esto porque tenemos una solicitud de cambio de contraseña, si no has sido ponte en contacto con nosotros, gracias.`,
+    };
+    transporter.sendMail(mailOptions, async function (error, info) {
+      if (error) {
+        /// SI HAY UN ERROR MANDO UN 404
+        console.log(error);
+        return res.status(404).json("dont send email and dont update user");
+      } else {
+        // SI NO HAY NINGUN ERROR
+        console.log("Email sent: " + info.response);
+        ///guardamos esta contraseña en mongo db
+
+        /// 1 ) encriptamos la contraseña
+        const newPasswordBcrypt = bcrypt.hashSync(passwordSecure, 10);
+
+        try {
+          /** este metodo te lo busca por id y luego modifica las claves que le digas
+           * en este caso le decimos que en la parte dde password queremos meter
+           * la contraseña hasheada
+           */
+          await User.findByIdAndUpdate(id, { password: newPasswordBcrypt });
+
+          //!------------------ test --------------------------------------------
+          // vuelvo a buscar el user pero ya actualizado
+          const userUpdatePassword = await User.findById(id);
+
+          // hago un compare sync ----> comparo una contraseña no encriptada con una encrptada
+          /// -----> userUpdatePassword.password ----> encriptada
+          /// -----> passwordSecure -----> contraseña no encriptada
+          if (bcrypt.compareSync(passwordSecure, userUpdatePassword.password)) {
+            // si son iguales quiere decir que el back se ha actualizado correctamente
+            return res.status(200).json({
+              updateUser: true,
+              sendPassword: true,
+            });
+          } else {
+            /** si no son iguales le diremos que hemos enviado el correo pero que no
+             * hemos actualizado el user del back en mongo db
+             */
+            return res.status(404).json({
+              updateUser: false,
+              sendPassword: true,
+            });
+          }
+        } catch (error) {
+          return res.status(404).json(error.message);
+        }
+      }
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//? -----------------------------------------------------------------------------
+//! --!!!!!!!!-----------CONTROLADORES QUE LLEVAN TOKEN NECESARIO--------!!!!!!!!
+//? -----------------------------------------------------------------------------
+
+//? -----------------------------------------------------------------------------
+//! ------------------CAMBIO DE CONTRASEÑA CUANDO NO ESTAS LOGADO---------------
+//? -----------------------------------------------------------------------------
+
+const modifyPassword = async (req, res, next) => {
+  /** Pasos:
+   * 1) por el body recibo la contraseña nueva y antigua
+   * 2) _id => lo saco de la req.user
+   * 3) la antigua contraseña que has escrito coincida con el back compareSync
+   * 4) La nueva contraseña se encrypta
+   * 5) se actualiza en el back
+   * test----
+   *
+   *
+   * Errores:
+   * -> que la contraseña antigua no coincida con la del back
+   * -> que  no se actualize la contraseña en el back
+   */
+
+  /** IMPORTANTE ---> REQ.USER ----> LO CREAR LOS AUTH MIDDLEWARE */
+  console.log("req.user", req.user);
+
+  try {
+    const { password, newPassword } = req.body;
+    const { _id } = req.user;
+
+    /** comparamos la contrasela vieja sin encriptar y la encriptada */
+    if (bcrypt.compareSync(password, req.user.password)) {
+      /** tenemos que encriptar la contraseña para poder guardarla en el back mongo db */
+      const newPasswordHashed = bcrypt.hashSync(newPassword, 10);
+
+      /** vamos a actualizar la contraseña en mongo db */
+      try {
+        await User.findByIdAndUpdate(_id, { password: newPasswordHashed });
+
+        /** TESTING EN TIEMPO REAL  */
+
+        //1) Traemos el user actualizado
+        const userUpdate = await User.findById(_id);
+
+        // 2) vamos a comparar la contraseña sin encriptar y la tenemos en el back que esta encriptada
+        if (bcrypt.compareSync(newPassword, userUpdate.password)) {
+          /// SI SON IGUALES 200 ---> UPDATE OK
+          return res.status(200).json({
+            updateUser: true,
+          });
+        } else {
+          ///NO SON IGUALES -------> 404 no son iguales
+          return res.status(404).json({
+            updateUser: false,
+          });
+        }
+      } catch (error) {
+        return res.status(404).json(error.message);
+      }
+    } else {
+      /** si las contraseñas no son iguales le mando un 404 diciendo que las contraseñas no son iguales */
+      return res.status(404).json("password dont match");
+    }
+  } catch (error) {
+    return next(error);
+    /**
+     * return next(
+      setError(
+        500,
+        error.message || 'Error general to ChangePassword with AUTH'
+      )
+    );
+     */
+  }
+};
+
+//! -----------------------------------------------------------------------------
+//? ---------------------------------UPDATE--------------------------------------
+//! -----------------------------------------------------------------------------
+
+const update = async (req, res, next) => {
+  // capturamos la imagen nueva subida a cloudinary
+  let catchImg = req.file?.path;
+
+  try {
+    // actualizamos los elementos unique del modelo
+    await User.syncIndexes();
+
+    // instanciamos un nuevo objeto del modelo de user con el req.body
+    const patchUser = new User(req.body);
+
+    // si tenemos imagen metemos a la instancia del modelo esta imagen nuevo que es lo que capturamos en catchImg
+    req.file && (patchUser.image = catchImg);
+
+    /** vamos a salvaguardar info que no quiero que el usuario pueda cambiarme */
+    // AUNQUE ME PIDA CAMBIAR ESTAS CLAVES NO SE LO VOY A CAMBIAR
+    patchUser._id = req.user._id;
+    patchUser.password = req.user.password;
+    patchUser.rol = req.user.rol;
+    patchUser.confirmationCode = req.user.confirmationCode;
+    patchUser.email = req.user.email;
+    patchUser.check = req.user.check;
+    patchUser.gender = req.user.gender;
+
+    try {
+      /** hacemos una actualizacion NO HACER CON EL SAVE
+       * le metemos en el primer valor el id de el objeto a actualizar
+       * y en el segundo valor le metemos la info que queremos actualizar
+       */
+      await User.findByIdAndUpdate(req.user._id, patchUser);
+
+      // si nos ha metido una imagen nueva y ya la hemos actualizado pues tenemos que borrar la antigua
+      // la antigua imagen la tenemos guardada con el usuario autenticado --> req.user
+      if (req.file) deleteImgCloudinary(req.user.image);
+
+      // ++++++++++++++++++++++ TEST RUNTIME+++++++++++++++++++++++++++++++++++++++
+      /** siempre lo pprimero cuando testeamos es el elemento actualizado para comparar la info que viene
+       * del req.body
+       */
+      const updateUser = await User.findById(req.user._id);
+
+      /** sacamos las claves del objeto del req.body para saber que info nos han pedido actualizar */
+      const updateKeys = Object.keys(req.body); // ["name"]
+
+      // creamos un array donde guardamos los test
+      const testUpdate = [];
+
+      // recorremos el array de la info que con el req.body nos dijeron de actualizar
+      /** recordar este array lo sacamos con el Object.keys */
+
+      // updateKeys ES UN ARRAY CON LOS NOMBRES DE LAS CLAVES = ["name", "email", "rol"]
+
+      ///----------------> para todo lo diferente de la imagen ----------------------------------
+      updateKeys.forEach((item) => {
+        /** vamos a comprobar que la info actualizada sea igual que lo que me mando por el body... */
+        if (updateUser[item] === req.body[item]) {
+          /** aparte vamos a comprobar que esta info sea diferente a lo que ya teniamos en mongo subido antes */
+          if (updateUser[item] != req.user[item]) {
+            // si es diferente a lo que ya teniamos lanzamos el nombre de la clave y su valor como true en un objeto
+            // este objeto see pusea en el array que creamos arriba que guarda todos los testing en el runtime
+            testUpdate.push({
+              [item]: true,
+            });
+          } else {
+            // si son igual lo que pusearemos sera el mismo objeto que arrriba pro diciendo que la info es igual
+            testUpdate.push({
+              [item]: "sameOldInfo",
+            });
+          }
+        } else {
+          testUpdate.push({
+            [item]: false,
+          });
+        }
+      });
+
+      /// ---------------------- para la imagen ---------------------------------
+      if (req.file) {
+        /** si la imagen del user actualizado es estrictamente igual a la imagen nueva que la
+         * guardamos en el catchImg, mandamos un objeto con la clave image y su valor en true
+         * en caso contrario mandamos esta clave con su valor en false
+         */
+        updateUser.image === catchImg
+          ? testUpdate.push({
+              image: true,
+            })
+          : testUpdate.push({
+              image: false,
+            });
+      }
+
+      /** una vez finalizado el testing en el runtime vamos a mandar el usuario actualizado y el objeto
+       * con los test
+       */
+      return res.status(200).json({
+        updateUser,
+        testUpdate,
+      });
+    } catch (error) {
+      if (req.file) deleteImgCloudinary(catchImg);
+      return res.status(404).json(error.message);
+    }
+  } catch (error) {
+    if (req.file) deleteImgCloudinary(catchImg);
+    return next(error);
+  }
+};
+
+//! -----------------------------------------------------------------------------
+//? ---------------------------------DELETE--------------------------------------
+//! -----------------------------------------------------------------------------
+
+const deleteUser = async (req, res, next) => {
+  try {
+    const { _id, image } = req.user;
+    await User.findByIdAndDelete(_id);
+
+    // hacemos un test para ver si lo ha borrado
+    if (await User.findById(_id)) {
+      // si el usuario
+      return res.status(404).json("not deleted"); ///
+    } else {
+      /**
+       * HAY QUE BORRARR TODO LO QUE HAY HECHO EL USER: LIKE, COMENTARIOS, LOS CHATS, LOS POSTS , REVIEWS ....
+       */
+      deleteImgCloudinary(image);
+
+      return res.status(200).json("ok delete");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//! -----------------------------------------------------------------------------
+//? ---------------------------------findById------------------------------------
+//! -----------------------------------------------------------------------------
+
+const byId = async (req, res, next) => {
+  try {
+    const userById = await User.findById(req.params.id); // si no lo encuentra es un null
+    if (userById) {
+      return res.status(200).json(userById);
+    } else {
+      return res.status(404).json("usuario no encontrado");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//! -----------------------------------------------------------------------------
+//? ---------------------------------getAll--------------------------------------
+//! -----------------------------------------------------------------------------
+
+const getAll = async (req, res, next) => {
+  try {
+    const getAllUser = await User.find(); // esto devuelve un array
+    if (getAll.length === 0) {
+      return res.status(404).json("no encontrados");
+    } else return res.status(200).json({ data: getAllUser });
+  } catch (error) {
+    return next(error);
+  }
+};
+//! -----------------------------------------------------------------------------
+//? ---------------------------------get By name---------------------------------
+//! -----------------------------------------------------------------------------
+
+const byName = async (req, res, next) => {
+  try {
+    const getNameUser = await User.findOne({ name: req.params.name });
+    if (getNameUser) {
+      return res.status(200).json(getNameUser);
+    } else {
+      return res.status(404).json("usuario no encontrado");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//! -----------------------------------------------------------------------------
+//? ---------------------------------get By Gender---------------------------------
+//! -----------------------------------------------------------------------------
+
+const byGender = async (req, res, next) => {
+  try {
+    const getGenderUser = await User.find({
+      gender: req.params.gender,
+      name: req.params.name,
+    });
+    if (getGenderUser) {
+      return res.status(200).json(getGenderUser);
+    } else {
+      return res.status(404).json("usuario no encontrado");
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
 module.exports = {
   registerLargo,
   registerUtil,
@@ -499,4 +898,13 @@ module.exports = {
   checkNewUser,
   login,
   autoLogin,
+  changePassword,
+  sendPassword,
+  modifyPassword,
+  update,
+  deleteUser,
+  getAll,
+  byId,
+  byName,
+  byGender,
 };

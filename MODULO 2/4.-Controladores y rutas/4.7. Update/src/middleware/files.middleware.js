@@ -1,22 +1,19 @@
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const dotenv = require("dotenv"); //Se utiliza dotem porque vamos a usar info del .env
+const dotenv = require("dotenv");
 dotenv.config();
-//impportamos las librerias que necesitamos que son cloudinary, etc.
 
-//Es un archivo que hace cloudinary la info no necesitamos aprenderlo,
-
-//Lo que tenemos que hacer es creamos el almacen, un storage. Crear una nueva instancia es hacer un new.
+//Creamos el almacen
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary, //utilizo la libreria de cloudinary
+  cloudinary: cloudinary,
   params: {
-    folder: "userProyectNeky",
-    allowedFormats: ["jpg", "png", "jpeg", "gif", "svg", "webp"], //formatos de subida permitidos
+    folder: "userProyect04FT",
+    allowedFormats: ["jpg", "png", "jpeg", "gif", "svg", "webp"],
   },
 });
 
-//Creamos la función que nos sirve para subir imagenes al storage de cloudinary a través de multer
+//Creamos la función de subir imagenes
 const upload = multer({ storage });
 
 //Función de borrado de imagenes
@@ -27,13 +24,11 @@ const deleteImgCloudinary = (imgUrl) => {
   const public_id = `${folderSplited}/${nameSplited[0]}`;
 
   cloudinary.uploader.destroy(public_id, () => {
-    //cloudinary borra la imagen con el metodo destroy
     console.log("Image delete in cloudinary");
   });
 };
 
 const configCloudinary = () => {
-  //estas son las variables que tenemos que incluir en el archivo .env con nuestra cuenta
   cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_secret: process.env.CLOUDINARY_API_SECRET,

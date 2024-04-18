@@ -38,7 +38,7 @@ const setError = require("../../helpers/handle-error");
 //! -----------------------------------------------------------------------------
 //? ----------------------------REGISTER LARGO EN CODIGO ------------------------
 //! -----------------------------------------------------------------------------
-//request, response, next
+//request, response, next en todos los controladores normales, a no ser que lleve una callback
 const registerLargo = async (req, res, next) => {
   console.log("entro");
   //las funciones son asincronas porque le pido algo a mongoDB y eso puede tardar
@@ -47,7 +47,7 @@ const registerLargo = async (req, res, next) => {
   // capturamos la imagen nueva subida a cloudinary
   let catchImg = req.file?.path;
   try {
-    // actualizamos los elementos unique del modelo
+    // actualizamos los elementos unicos del modelo
     await User.syncIndexes();
 
     const { email, name } = req.body; // lo que enviamos por la parte del body de la request
@@ -61,10 +61,10 @@ const registerLargo = async (req, res, next) => {
 
     if (!userExist) {
       //si no existe el usuario registralo
-      let confirmationCode = randomCode();
-      const newUser = new User({ ...req.body, confirmationCode });
+      let confirmationCode = randomCode(); //genera un codigo randon con la funcion de utils
+      const newUser = new User({ ...req.body, confirmationCode }); //suma los valores del body y el codigo de confirmacion
       if (req.file) {
-        newUser.image = req.file.path; //si tienes imagen metes la imagen si no la tienes metes una por defecto.
+        newUser.image = req.file.path; //si tienes imagen la metes con un path la imagen si no la tienes metes una por defecto.
       } else {
         newUser.image = "https://pic.onlinewebfonts.com/svg/img_181369.png";
       }
@@ -73,10 +73,11 @@ const registerLargo = async (req, res, next) => {
         const userSave = await newUser.save();
         if (userSave) {
           // ---------------------------> ENVIAR EL CODIGO CON NODEMAILER --------------------
-          const emailEnv = process.env.EMAIL;
+          const emailEnv = process.env.EMAIL; //trae las variables de entorno que son el mail y la contraseña de gmail
           const password = process.env.PASSWORD;
 
           const transporter = nodemailer.createTransport({
+            //crea el transporte del correo y luego con la funcion send email la envia
             service: "gmail",
             auth: {
               user: emailEnv,
@@ -92,6 +93,7 @@ const registerLargo = async (req, res, next) => {
           };
 
           transporter.sendMail(mailOptions, function (error, info) {
+            //aqui envia el correo
             if (error) {
               console.log(error);
               return res.status(404).json({

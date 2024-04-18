@@ -536,7 +536,7 @@ const changePassword = async (req, res, next) => {
 
 const sendPassword = async (req, res, next) => {
   try {
-    /** VAMOS A BUSCAR AL USER POOR EL ID DEL PARAM */
+    /** VAMOS A BUSCAR AL USER POR EL ID DEL PARAM */
     const { id } = req.params;
     const userDb = await User.findById(id);
     const email = process.env.EMAIL;
@@ -548,15 +548,17 @@ const sendPassword = async (req, res, next) => {
         pass: password,
       },
     });
-    let passwordSecure = randomPassword();
-    console.log(passwordSecure);
+    let passwordSecure = randomPassword(); //contraseña que hemos creado en utils con la función randompassword
+    console.log(passwordSecure); //se hace un console.log para comprobar que la contraseña esta bien
     const mailOptions = {
-      from: email,
+      //funcion para generar el mail
       to: userDb.email,
-      subject: "-----",
-      text: `User: ${userDb.name}. code: ${passwordSecure} Hemos enviado esto porque tenemos una solicitud de cambio de contraseña, si no has sido ponte en contacto con nosotros, gracias.`,
-    };
+      subject: "Cambio de codigo de login",
+      text: `User: ${userDb.name}. Your new code login: ${passwordSecure} Hemos enviado esto porque tenemos una solicitud de cambio de contraseña, si no has sido ponte en contacto con nosotros, gracias.`,
+    }; //no incluir la palabra password como tal porque se borra por seguridad, por eso pone code o login. Si no gmail borra el correo
     transporter.sendMail(mailOptions, async function (error, info) {
+      //funcion para enviar el mail, es asincrona
+      //a parte de enviar el correo también hasea la contraseña cuando ya envia la contraseña
       if (error) {
         /// SI HAY UN ERROR MANDO UN 404
         console.log(error);
@@ -567,7 +569,7 @@ const sendPassword = async (req, res, next) => {
         ///guardamos esta contraseña en mongo db
 
         /// 1 ) encriptamos la contraseña
-        const newPasswordBcrypt = bcrypt.hashSync(passwordSecure, 10);
+        const newPasswordBcrypt = bcrypt.hashSync(passwordSecure, 10); //con el hashSync encripta la nueva contraseña
 
         try {
           /** este metodo te lo busca por id y luego modifica las claves que le digas
@@ -575,17 +577,20 @@ const sendPassword = async (req, res, next) => {
            * la contraseña hasheada
            */
           await User.findByIdAndUpdate(id, { password: newPasswordBcrypt });
+          //con esta query busca la contraseña y la actualiza cuando ya ha sido encriptada
 
           //!------------------ test --------------------------------------------
+          //    Los test sirven para comprobar si funciona lo que hemos hecho, siempre son iguales los tests.
           // vuelvo a buscar el user pero ya actualizado
           const userUpdatePassword = await User.findById(id);
 
-          // hago un compare sync ----> comparo una contraseña no encriptada con una encrptada
+          // hago un compare sync ----> comparo una contraseña no encriptada con una encrptada como en el caso anterior
           /// -----> userUpdatePassword.password ----> encriptada
           /// -----> passwordSecure -----> contraseña no encriptada
           if (bcrypt.compareSync(passwordSecure, userUpdatePassword.password)) {
             // si son iguales quiere decir que el back se ha actualizado correctamente
             return res.status(200).json({
+              //devuelve un 200 qque todo ok
               updateUser: true,
               sendPassword: true,
             });
