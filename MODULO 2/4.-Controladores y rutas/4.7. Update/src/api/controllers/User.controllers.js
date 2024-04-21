@@ -687,13 +687,15 @@ const modifyPassword = async (req, res, next) => {
 //! -----------------------------------------------------------------------------
 //? ---------------------------------UPDATE--------------------------------------
 //! -----------------------------------------------------------------------------
+//valorar primero que datos queremos que el usuario pueda actualizar. No podrán actualizar todo, por ejemplo el id, rol.
 
 const update = async (req, res, next) => {
   // capturamos la imagen nueva subida a cloudinary
   let catchImg = req.file?.path;
 
   try {
-    // actualizamos los elementos unique del modelo
+    // siempre que modifiquemos algo en un modelo se pone esto para sincronizar los indexes--> Hay que ponerlo para que
+    //la DB se actualice
     await User.syncIndexes();
 
     // instanciamos un nuevo objeto del modelo de user con el req.body
@@ -731,8 +733,9 @@ const update = async (req, res, next) => {
 
       /** sacamos las claves del objeto del req.body para saber que info nos han pedido actualizar */
       const updateKeys = Object.keys(req.body); // ["name"]
+      //ObjectKey es un método que saca las claves
 
-      // creamos un array donde guardamos los test
+      // creamos un array vacio donde guardamremos la info del test
       const testUpdate = [];
 
       // recorremos el array de la info que con el req.body nos dijeron de actualizar
@@ -741,18 +744,23 @@ const update = async (req, res, next) => {
       // updateKeys ES UN ARRAY CON LOS NOMBRES DE LAS CLAVES = ["name", "email", "rol"]
 
       ///----------------> para todo lo diferente de la imagen ----------------------------------
+
       updateKeys.forEach((item) => {
         /** vamos a comprobar que la info actualizada sea igual que lo que me mando por el body... */
         if (updateUser[item] === req.body[item]) {
+          //Es igual lo que actualizo que lo que tengo en el request.body?
           /** aparte vamos a comprobar que esta info sea diferente a lo que ya teniamos en mongo subido antes */
           if (updateUser[item] != req.user[item]) {
+            //EL req.user es el usuario antes de actualizarse
+
+            //Lo que tengo en update no es igual a lo que tenia en el request user?
             // si es diferente a lo que ya teniamos lanzamos el nombre de la clave y su valor como true en un objeto
-            // este objeto see pusea en el array que creamos arriba que guarda todos los testing en el runtime
+            // este objeto see pushea en el array que creamos arriba que guarda todos los testing en el runtime
             testUpdate.push({
-              [item]: true,
+              [item]: true, //la clave item va entre corchetes para que coja su valor de la variable, si la pongo sin corchetes solo coge el nombre de la variable
             });
           } else {
-            // si son igual lo que pusearemos sera el mismo objeto que arrriba pro diciendo que la info es igual
+            // si son igual lo que pushearemos sera el mismo objeto que arrriba pro diciendo que la info es igual
             testUpdate.push({
               [item]: "sameOldInfo",
             });

@@ -61,7 +61,7 @@ UserSchema.pre("save", async function (next) {
   } catch (error) {
     next("Error hashing password", error);
   }
-});
+}); //es como in middleware porque es un presave
 
 const User = mongoose.model("User", UserSchema);
 

@@ -11,3 +11,5 @@ const flecha = (a = 10, b = 5) => console.log(a + b);
 const funcion = flecha();
 const funcion1 = flecha(5);
 const funcion2 = flecha(20, 5);
+
+const flecha2 = (a, b = 0) => console.log(a + b);

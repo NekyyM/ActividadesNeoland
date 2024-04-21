@@ -803,19 +803,21 @@ const update = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
   try {
     const { _id, image } = req.user;
-    await User.findByIdAndDelete(_id);
+    await User.findByIdAndDelete(_id); //primero lo borra con esta query
 
-    // hacemos un test para ver si lo ha borrado
+    // hacemos un pequeño test para ver si lo ha borrado
     if (await User.findById(_id)) {
+      //entonces lo buscas y si lo encuentras
       // si el usuario
-      return res.status(404).json("not deleted"); ///
+      return res.status(404).json("not deleted"); /// manda el error 404 es que no lo has borrado
     } else {
       /**
        * HAY QUE BORRARR TODO LO QUE HAY HECHO EL USER: LIKE, COMENTARIOS, LOS CHATS, LOS POSTS , REVIEWS ....
+       * Se iria borrando uno a uno con todos  los try catch que necesitariamos
        */
-      deleteImgCloudinary(image);
+      deleteImgCloudinary(image); //en caso que se haya borrado, también borramos su imagen
 
-      return res.status(200).json("ok delete");
+      return res.status(200).json("ok delete"); //si no lo encuentra es que si lo ha borrado y lanza mensaje 200 de ok
     }
   } catch (error) {
     return next(error);
@@ -827,12 +829,13 @@ const deleteUser = async (req, res, next) => {
 //! -----------------------------------------------------------------------------
 
 const byId = async (req, res, next) => {
+  //busca elementos por su ID
   try {
-    const userById = await User.findById(req.params.id); // si no lo encuentra es un null
+    const userById = await User.findById(req.params.id); // apuntamos al modelo(User) y hacemos un findById. Si no lo encuentra devuelve un null
     if (userById) {
       return res.status(200).json(userById);
     } else {
-      return res.status(404).json("usuario no encontrado");
+      return res.status(404).json("usuario no encontrado"); //Si no encuentra devuelve un 400
     }
   } catch (error) {
     return next(error);
@@ -844,26 +847,30 @@ const byId = async (req, res, next) => {
 //! -----------------------------------------------------------------------------
 
 const getAll = async (req, res, next) => {
+  //Buscamos todos los elementos
   try {
-    const getAllUser = await User.find(); // esto devuelve un array
+    const getAllUser = await User.find(); // apuntamos al modelo (user) y usamos el find, esto devuelve un array
     if (getAll.length === 0) {
-      return res.status(404).json("no encontrados");
-    } else return res.status(200).json({ data: getAllUser });
+      //si la longitud del array es igual a 0 quiere decir que no hay nada, que está vacio
+      return res.status(404).json("no encontrados"); //devuelve un 404 de que no encuentra nada
+    } else return res.status(200).json({ data: getAllUser }); //en caso contrario de que si encuentre elementos los enviamos
   } catch (error) {
+    //le envio a la data por un json toda la constante getAll
     return next(error);
   }
 };
 //! -----------------------------------------------------------------------------
 //? ---------------------------------get By name---------------------------------
 //! -----------------------------------------------------------------------------
-
+//Siempre las coleeciones de datos son objetos, por lo cual para buscar dentro del objeto tenemos que indicarle que clave tiene que buscar.
 const byName = async (req, res, next) => {
   try {
-    const getNameUser = await User.findOne({ name: req.params.name });
+    const getNameUser = await User.findOne({ name: req.params.name }); //Le decimos en qué clave del objeto quiero que busque, es un objeto. Name en este caso
+    //FindOne para encontrar solamente uno que coincida
     if (getNameUser) {
-      return res.status(200).json(getNameUser);
+      return res.status(200).json(getNameUser); //si lo encuentra lo devuelve y lanza 200
     } else {
-      return res.status(404).json("usuario no encontrado");
+      return res.status(404).json("usuario no encontrado"); //si no devuelve 404 y devuelve null
     }
   } catch (error) {
     return next(error);
@@ -873,6 +880,8 @@ const byName = async (req, res, next) => {
 //! -----------------------------------------------------------------------------
 //? ---------------------------------get By Gender---------------------------------
 //! -----------------------------------------------------------------------------
+
+//funciona igual que el name cambiando la clave que vamos a buscar en el objeto
 
 const byGender = async (req, res, next) => {
   try {

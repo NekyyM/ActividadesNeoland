@@ -638,7 +638,7 @@ const modifyPassword = async (req, res, next) => {
     const { password, newPassword } = req.body;
     const { _id } = req.user;
 
-    /** comparamos la contrasela vieja sin encriptar y la encriptada */
+    /** comparamos la contraseña vieja sin encriptar y la encriptada */
     if (bcrypt.compareSync(password, req.user.password)) {
       /** tenemos que encriptar la contraseña para poder guardarla en el back mongo db */
       const newPasswordHashed = bcrypt.hashSync(newPassword, 10);

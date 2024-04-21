@@ -38,9 +38,9 @@ UserRoutes.patch("/changepassword", [isAuth], modifyPassword);
 UserRoutes.patch("/update/update", [isAuth], upload.single("image"), update);
 UserRoutes.delete("/", [isAuth], deleteUser);
 UserRoutes.get("/", getAll);
-UserRoutes.get("/finById/:id", byId);
-UserRoutes.get("/finByName/:name", byName);
-UserRoutes.get("/finByGender/:gender/:name", byGender);
+UserRoutes.get("/findById/:id", byId);
+UserRoutes.get("/findByName/:name", byName);
+UserRoutes.get("/findByGender/:gender/:name", byGender);
 
 //!------------------------------------------------------------------------
 //?--------------------------------RUTAS CON REDIRECT----------------------
