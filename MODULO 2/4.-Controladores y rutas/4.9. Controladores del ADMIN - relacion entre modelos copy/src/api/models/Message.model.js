@@ -12,11 +12,6 @@ const Schema = mongoose.Schema;
 // ------------> definimos otras propiedades que limitan la informacion que se puede incluir en esa clave
 // ------------> que sea requerido, una longitud maxima y minima, etc etc
 
-// Este es el modelo más complicado porque puede tener 4 posibilidades diferentes, que le envíes un mensaje privado a alguien,
-//Que escribas un mensaje público en una película o en un personaje por ejemplo.
-
-//Un chat es un mensaje privado
-
 const MenssageSchema = new Schema(
   {
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
@@ -33,8 +28,7 @@ const MenssageSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Character",
     },
-    recipientMovie: { type: mongoose.Schema.Types.ObjectId, ref: "Movie" }, //Se relaciona con los diferentes modelos
-    //Si quieres escribir en una película un comentario o en un personaje por ejemplo.
+    recipientMovie: { type: mongoose.Schema.Types.ObjectId, ref: "Movie" },
     recipientUser: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
