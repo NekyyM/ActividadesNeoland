@@ -1,0 +1,7 @@
+.imagen {
+    width: 500px;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    object-fit: cover;
+}
