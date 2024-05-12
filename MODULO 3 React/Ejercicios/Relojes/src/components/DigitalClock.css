@@ -1,0 +1,11 @@
+.digital-clock {
+  font-family: Arial, sans-serif;
+  font-size: 4rem;
+  color: #50894e;
+  background-color: #5e565629;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(118, 91, 91, 0.1);
+  text-align: center;
+  width: 400px;
+}
