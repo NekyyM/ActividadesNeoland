@@ -5,7 +5,7 @@ const App = () => {
   return (
     <>
       <header>
-        <h1>Curriculum 🥑</h1>
+        <h1>Curriculum 🦸🏻‍♂️</h1>
       </header>
       <main className="main">
         <nav className="navGeneral">

@@ -1,0 +1,74 @@
+/* Estilo general */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Card container: para el div de volunteer y habilities */
+.card {
+  background-color: #fff;
+  padding: 20px;
+  margin: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: grid;
+
+}
+
+/* Estilo para las secciones de volunteer y habilities */
+.volunteer, .habilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Espacio entre columnas */
+}
+
+/* Card de volunteer: Estilo para cada item */
+.volunteer > div {
+  width: calc(50% - 10px); /* Dos columnas, considerando el gap */
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Espacio entre los elementos */
+}
+
+.volunteer .name {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #213547;
+}
+
+/* Estilo de los textos dentro de volunteer */
+.volunteer p {
+  font-size: 1em;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* Habilities card: Estilo para mostrar los items en dos columnas */
+.habilities {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Dos columnas */
+  gap: 20px;
+}
+
+/* Estilo para cada habilidad dentro de habilities */
+.habilities .name {
+  font-size: 1em;
+  font-weight: 500;
+  color: #258f45;
+  background-color: #f0f8f1;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Estilo de la sección general para More.jsx */
+.more-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 20px;
+  text-align: center;
+}
