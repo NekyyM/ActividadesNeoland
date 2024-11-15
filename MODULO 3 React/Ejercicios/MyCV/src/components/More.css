@@ -7,17 +7,38 @@
   padding: 0;
 }
 
-/* Card container: para el div de volunteer y habilities */
-.card {
+section{
+  display: flex;
+  justify-content: center; /* Centra las tarjetas en la pantalla */
+  gap: 20px; /* Espacio entre las dos tarjetas */
+  max-width: 100%; /* Evita que se expandan más allá de la pantalla */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Tarjeta para volunteer, más ancha */
+.volunteer.card {
   background-color: #fff;
   padding: 20px;
   margin: 10px 0;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  display: grid;
-
+  flex-basis: 65%; /* Ocupa el 65% del ancho del contenedor */
+  max-width: 700px; /* Ancho máximo opcional */
+  box-sizing: border-box;
 }
 
+/* Tarjeta para habilities, más estrecha */
+.habilities.card {
+  background-color: #fff;
+  padding: 20px;
+  margin: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex-basis: 35%; /* Ocupa el 35% del ancho del contenedor */
+  max-width: 400px; /* Ancho máximo opcional */
+  box-sizing: border-box;
+}
 /* Estilo para las secciones de volunteer y habilities */
 .volunteer, .habilities {
   display: flex;
@@ -25,12 +46,13 @@
   gap: 10px; /* Espacio entre columnas */
 }
 
+
 /* Card de volunteer: Estilo para cada item */
 .volunteer > div {
   width: calc(50% - 10px); /* Dos columnas, considerando el gap */
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Espacio entre los elementos */
+  gap: 5px; /* Espacio entre los elementos */
 }
 
 .volunteer .name {
@@ -49,26 +71,20 @@
 /* Habilities card: Estilo para mostrar los items en dos columnas */
 .habilities {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Dos columnas */
-  gap: 20px;
+  grid-template-columns: repeat(4, 1fr); /* Dos columnas */
+  gap: 5px;
+  width: 290px;
+  height: 340px;
 }
 
 /* Estilo para cada habilidad dentro de habilities */
 .habilities .name {
   font-size: 1em;
   font-weight: 500;
+  height: 70px;
   color: #258f45;
   background-color: #f0f8f1;
   padding: 10px;
   border-radius: 8px;
-  text-align: center;
-}
-
-/* Estilo de la sección general para More.jsx */
-.more-container {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  padding: 20px;
   text-align: center;
 }
